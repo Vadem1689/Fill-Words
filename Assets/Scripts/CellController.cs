@@ -6,23 +6,23 @@ using UnityEngine.UI;
 
 public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerUpHandler
 {
-    public int x, y; // Координаты клетки
-    public string letter; // Буква в клетке
+    public int x, y;
+    public string letter;
     public Color originalColor;
     public Image cellImage;
-    public GameObject SectetPanel;
+    public GameObject SecretPanel;
     public CellController cellParent;
-
     public bool SecretWord = false;
+    public bool IsLocked { get; set; }
 
-    public bool IsLocked { get; set; } // Свойство для блокировки клетки
+    [SerializeField] private GameObject secretCellPrefab; // РџСЂРµС„Р°Р± РґР»СЏ SecretCellController
 
     private void Awake()
     {
         cellImage = GetComponent<Image>();
         if (cellImage != null)
         {
-            originalColor = cellImage.color; // Сохраняем оригинальный цвет
+            originalColor = cellImage.color;
         }
     }
 
@@ -30,23 +30,17 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     {
         this.x = x;
         this.y = y;
-
-        // Преобразуем строку в StringBuilder для манипуляции символами
         StringBuilder word = new StringBuilder(letter);
 
         if (word[0] == '_')
         {
-            // Удаляем первый символ и сохраняем результат в word
             word.Remove(0, 1);
-            //cellImage.color = Color.red;
             SecretWord = true;
         }
 
         GetComponentInChildren<TextMeshProUGUI>().text = word.ToString();
-        // Преобразуем обратно в строку и присваиваем
         this.letter = word.ToString();
-        IsLocked = false; // Изначально клетки не заблокированы
-
+        IsLocked = false;
     }
 
     public void HighlightCell(Color color)
@@ -59,7 +53,7 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
     public void ResetCell()
     {
-        if (cellImage != null && !IsLocked) // Сбрасываем цвет только если клетка не заблокирована
+        if (cellImage != null && !IsLocked)
         {
             cellImage.color = originalColor;
         }
@@ -67,7 +61,7 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
     public void LockCell()
     {
-        IsLocked = true; // Устанавливаем блокировку
+        IsLocked = true;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -88,17 +82,24 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
     public void OnPointerUp(PointerEventData eventData)
     {
-
         if (GridVisualizer.instance != null && GridVisualizer.instance.IsSelecting() && cellParent == null)
         {
             GridVisualizer.instance.EndSelection();
         }
+
         if (SecretWord && cellParent == null)
         {
-            CellController cell = Instantiate(gameObject, SectetPanel.transform).GetComponent<CellController>();
-            cell.cellParent = this;
-            cellImage.color = Color.green;
-            SectetPanel.GetComponent<SecretContainer>().SectretWordPoisk();
+            if (!IsLocked) // Р•СЃР»Рё Р±СѓРєРІР° РЅРµ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅР°, РґРѕР±Р°РІР»СЏРµРј
+            {
+                GameObject secretCellObj = Instantiate(secretCellPrefab, SecretPanel.transform);
+                SecretCellController secretCell = secretCellObj.GetComponent<SecretCellController>();
+                secretCell.Initialize(this);
+                cellImage.color = Color.green;
+                IsLocked = true;
+                SecretPanel.GetComponent<SecretContainer>().SectretWordPoisk();
+            }
         }
     }
 }
+
+

@@ -229,9 +229,10 @@ MonoBehaviour:
   letter: 108
   originalColor: {r: 0, g: 0, b: 0, a: 0}
   cellImage: {fileID: 0}
-  SectetPanel: {fileID: 0}
+  SecretPanel: {fileID: 0}
   cellParent: {fileID: 0}
   SecretWord: 0
+  secretCellPrefab: {fileID: 7518743088146674186, guid: e414d5a6bf08dfe44a57f9ba4aaece95, type: 3}
 --- !u!114 &8016908820317849267
 MonoBehaviour:
   m_ObjectHideFlags: 0

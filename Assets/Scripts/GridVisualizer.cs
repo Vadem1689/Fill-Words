@@ -19,7 +19,7 @@ public class GridVisualizer : MonoBehaviour
     private bool isSelecting = false;
     public GameObject LoadPanel;
 
-    private Queue<Color> recentColors = new Queue<Color>(); // Очередь для уникальных цветов
+    private Queue<Color> recentColors = new Queue<Color>(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
     void Awake()
     {
@@ -44,7 +44,7 @@ public class GridVisualizer : MonoBehaviour
             for (int y = 0; y < gridGenerator.gridSize; y++)
             {
                 GameObject cell = Instantiate(cellPrefab, gridLayout.transform);
-                cell.GetComponent<CellController>().SectetPanel = SectretContainer;
+                cell.GetComponent<CellController>().SecretPanel = SectretContainer;
                 TextMeshProUGUI cellText = cell.GetComponentInChildren<TextMeshProUGUI>();
                 if (cellText != null)
                 {
@@ -55,27 +55,27 @@ public class GridVisualizer : MonoBehaviour
                 if (cellController != null)
                 {
                     cellController.SetData(x, y, grid[x, y]);
-                    cellController.IsLocked = false; // Инициализация состояния клетки
+                    cellController.IsLocked = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 }
 
                 yield return null;
             }
         }
         LoadPanel.SetActive(false);
-        Debug.Log("Сетка визуализирована и готова.");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
     }
 
     public void StartSelection(CellController cell)
     {
         if (cell.IsLocked)
         {
-            Debug.LogWarning("Эта клетка уже заблокирована.");
+            Debug.LogWarning("пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
             return;
         }
 
         if (selectedCells.Count > 0 && !IsAdjacent(cell, selectedCells[selectedCells.Count - 1]))
         {
-            ResetSelection(); // Сбрасываем выбор, если клетка не является соседней
+            ResetSelection(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
 
         isSelecting = true;
@@ -97,19 +97,19 @@ public class GridVisualizer : MonoBehaviour
         string word = string.Concat(selectedCells.ConvertAll(c => c.letter));
         if (gridGenerator.wordsToPlace.Contains(word))
         {
-            Debug.Log("Правильное слово выбрано!");
+            Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
 
-            // Применяем случайный цвет к выбранным клеткам
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             ApplyRandomColorToSelection();
 
-            // Блокируем выбранные клетки
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             LockSelectedCells();
 
             selectedCells.Clear();
         }
         else
         {
-            Debug.LogWarning("Выбрано неправильное слово.");
+            Debug.LogWarning("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.");
             ResetSelection();
         }
     }
@@ -124,7 +124,7 @@ public class GridVisualizer : MonoBehaviour
         if (!selectedCells.Contains(cell))
         {
             selectedCells.Add(cell);
-            cell.HighlightCell(Color.yellow); // Выделяем клетку жёлтым цветом
+            cell.HighlightCell(Color.yellow); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         }
     }
 
@@ -185,7 +185,7 @@ public class GridVisualizer : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        Debug.Log("Сетка очищена.");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
     }
 
     public void RestartGame()
