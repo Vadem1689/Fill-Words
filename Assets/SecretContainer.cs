@@ -8,6 +8,7 @@ public class SecretContainer : MonoBehaviour
     public string SecretWord;
     public GameObject WinPanel;
     public GridGenerator _GridGenerator;
+    public LevelManager levelManager;
 
     void Start()
     {
@@ -29,6 +30,7 @@ public class SecretContainer : MonoBehaviour
         }
         if(q == SecretWord)
         {
+            levelManager.OnLevelCompleted();
             WinPanel.SetActive(true);
         }
     }

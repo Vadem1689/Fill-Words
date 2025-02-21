@@ -14,44 +14,44 @@ public class GameManager : MonoBehaviour
         //StartCoroutine(RunGameFlow());
     }
 
-    public IEnumerator RunGameFlow()
+    public IEnumerator RunGameFlow(int levelNumber)
     {
-        Debug.Log("Загрузка слов...");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ...");
         wordLoader.LoadWords();
 
         if (WordLoader.words == null || WordLoader.words.Count == 0)
         {
-            Debug.LogError("Список слов пуст! Проверьте JSON-файл.");
+            Debug.LogError("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ JSON-пїЅпїЅпїЅпїЅ.");
             yield break;
         }
 
         while (true)
         {
-            Debug.Log("Подбор слов для заполнения сетки...");
+            Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ...");
 
             gridGenerator.wordsToPlace = new List<string>(WordLoader.words);
 
-            Debug.Log("Генерация сетки...");
+            Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ...");
             bool success = false;
-            yield return StartCoroutine(gridGenerator.GenerateGridCoroutine(result => success = result));
+            yield return StartCoroutine(gridGenerator.GenerateGridCoroutine(levelNumber, 5, result => success = result));
 
             if (success)
             {
-                Debug.Log("Сетка успешно сгенерирована!");
+                Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
                 break;
             }
             else
             {
-                Debug.LogWarning("Не удалось сгенерировать сетку. Повторная попытка...");
+                Debug.LogWarning("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ...");
 
-                yield return StartCoroutine(gridGenerator.GenerateGridCoroutine(result => success = result));
+                yield return StartCoroutine(gridGenerator.GenerateGridCoroutine(levelNumber, 5, result => success = result));
             }
         }
 
-        Debug.Log("Визуализация...");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ...");
         gridVisualizer.gridGenerator = gridGenerator;
         yield return StartCoroutine(gridVisualizer.VisualizeGridCoroutine());
 
-        Debug.Log("Игра успешно запущена!");
+        Debug.Log("пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
     }
 }

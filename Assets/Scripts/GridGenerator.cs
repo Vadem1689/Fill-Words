@@ -1,76 +1,72 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 
 public class GridGenerator : MonoBehaviour
 {
-    public List<string> wordsToPlace; // Список слов для размещения
-    public string[,] grid;             // Сетка
-    public int gridSize;             // Размер сетки
-    public string secretWord;        // Тайное слово
-    private HashSet<(int, int)> protectedCells = new HashSet<(int, int)>(); // Клетки, защищённые от изменений
+    public List<string> wordsToPlace; // РЎР»РѕРІР° РґР»СЏ СЂР°Р·РјРµС‰РµРЅРёСЏ
+    public string[,] grid;            // РЎР°РјР° СЃРµС‚РєР°
+    public int gridSize;              // Р Р°Р·РјРµСЂ СЃРµС‚РєРё
+    public string secretWord;         // РЎРµРєСЂРµС‚РЅРѕРµ СЃР»РѕРІРѕ
+
+    private HashSet<(int, int)> protectedCells = new HashSet<(int, int)>(); // РЇС‡РµР№РєРё, РєРѕС‚РѕСЂС‹Рµ Р·Р°С‰РёС‰РµРЅС‹ РѕС‚ РїРµСЂРµР·Р°РїРёСЃРё
 
     private (int dx, int dy)[] directions = new (int, int)[]
     {
-        (1, 0), (0, 1), // Вправо, вниз
-        (-1, 0), (0, -1) // Влево, вверх
+        (1, 0), (0, 1),  // Р’РїСЂР°РІРѕ, РІРЅРёР·
+        (-1, 0), (0, -1) // Р’Р»РµРІРѕ, РІРІРµСЂС…
     };
 
-    public void InitializeGrid()
+    public void InitializeGrid(int gridSize)
     {
         grid = new string[gridSize, gridSize];
         for (int x = 0; x < gridSize; x++)
         {
             for (int y = 0; y < gridSize; y++)
             {
-                grid[x, y] = "_"; // Пустая ячейка
+                grid[x, y] = "_"; // РР·РЅР°С‡Р°Р»СЊРЅРѕ РІСЃРµ СЏС‡РµР№РєРё РїСѓСЃС‚С‹Рµ
             }
         }
         protectedCells.Clear();
     }
 
-    public IEnumerator GenerateGridCoroutine(System.Action<bool> onComplete)
+    public IEnumerator GenerateGridCoroutine(int levelNumber, int gridSize, System.Action<bool> onComplete)
     {
-        InitializeGrid();
+        this.gridSize = gridSize;
+        // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РіРµРЅРµСЂР°С‚РѕСЂ РїСЃРµРІРґРѕСЂР°РЅРґРѕРјРЅС‹С… С‡РёСЃРµР» Р·Р°РґР°РЅРЅС‹Рј seed.
+        // Р­С‚Рѕ РїРѕР·РІРѕР»РёС‚, С‡С‚Рѕ РїСЂРё РѕРґРЅРѕРј Рё С‚РѕРј Р¶Рµ Р·РЅР°С‡РµРЅРёРё seed РіРµРЅРµСЂР°С†РёСЏ Р±СѓРґРµС‚ РёРґРµРЅС‚РёС‡РЅРѕР№.
+        Random.InitState(levelNumber);
 
-        // Подбираем случайные слова
+        InitializeGrid(gridSize);
+
+        // Р’С‹Р±РёСЂР°РµРј СЃР»СѓС‡Р°Р№РЅС‹Рµ СЃР»РѕРІР° РґР»СЏ Р·Р°РїРѕР»РЅРµРЅРёСЏ СЃРµС‚РєРё
         if (!SelectRandomWords())
         {
-            Debug.LogError("Не удалось подобрать слова для заполнения сетки.");
+            Debug.LogError("РќРµ СѓРґР°Р»РѕСЃСЊ РІС‹Р±СЂР°С‚СЊ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР»РѕРІ РґР»СЏ Р·Р°РїРѕР»РЅРµРЅРёСЏ СЃРµС‚РєРё.");
             onComplete?.Invoke(false);
             yield break;
         }
 
-        // Выбираем тайное слово из списка
+        // Р’С‹Р±РёСЂР°РµРј СЃРµРєСЂРµС‚РЅРѕРµ СЃР»РѕРІРѕ Рё СѓРґР°Р»СЏРµРј РµРіРѕ РёР· СЃРїРёСЃРєР°
         secretWord = wordsToPlace[Random.Range(0, wordsToPlace.Count)];
         wordsToPlace.Remove(secretWord);
 
-        // Размещаем тайное слово
-        //if (!PlaceSecretWord(secretWord))
-        //{
-        //    Debug.LogError("Не удалось разместить тайное слово.");
-        //    onComplete?.Invoke(false);
-        //    yield break;
-        //}
-
-        // Размещаем оставшиеся слова в сетке
+        // Р Р°Р·РјРµС‰Р°РµРј РѕСЃС‚Р°РІС€РёРµСЃСЏ СЃР»РѕРІР°
         foreach (var word in wordsToPlace)
         {
             Debug.Log(word);
 
             if (!TryPlaceWordWithTurns(word))
             {
-                Debug.LogWarning($"Не удалось разместить слово: {word}");
-                onComplete?.Invoke(false);
-                yield break;
-                ///////////////////////////////////////////////////////////////////////////////
+                // Debug.LogWarning($"РќРµ СѓРґР°Р»РѕСЃСЊ СЂР°Р·РјРµСЃС‚РёС‚СЊ СЃР»РѕРІРѕ: {word}");
+                // onComplete?.Invoke(false);
+                // yield break;
             }
         }
 
-        Debug.LogWarning($"Успешно");
-        // Заполняем оставшиеся пустые ячейки буквами из тайного слова
+        Debug.LogWarning("РЎРµС‚РєР° СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅР°");
+        // Р—Р°РїРѕР»РЅСЏРµРј РѕСЃС‚Р°РІС€РёРµСЃСЏ РїСѓСЃС‚С‹Рµ СЏС‡РµР№РєРё СЃРёРјРІРѕР»Р°РјРё СЃРµРєСЂРµС‚РЅРѕРіРѕ СЃР»РѕРІР°
         FillEmptyCellsWithSecretWord();
 
         onComplete?.Invoke(true);
@@ -82,7 +78,7 @@ public class GridGenerator : MonoBehaviour
         int totalCells = gridSize * gridSize;
 
         List<string> randomWords = WordLoader.words
-            .Where(word => word.Length <= totalCells && word.All(char.IsLetter)) // Фильтруем только слова с буквами
+            .Where(word => word.Length <= totalCells && word.All(char.IsLetter))
             .OrderBy(_ => Random.value)
             .ToList();
 
@@ -95,17 +91,13 @@ public class GridGenerator : MonoBehaviour
             {
                 selectedWords.Add(word);
                 usedCells += word.Length;
-
-                if (usedCells == totalCells)
-                {
-                    wordsToPlace = selectedWords;
-                    return true;
-                }
             }
         }
 
-        return false; // Не удалось подобрать слова для заполнения сетки
+        wordsToPlace = selectedWords;
+        return true;
     }
+
 
     private bool TryPlaceWordWithTurns(string word)
     {
@@ -130,12 +122,12 @@ public class GridGenerator : MonoBehaviour
             {
                 if (CanPlaceWordWithTurn(word, startX, startY, dx, dy))
                 {
-                    return true; // Слово размещено успешно
+                    return true;
                 }
             }
         }
 
-        return false; // Не удалось разместить слово
+        return false;
     }
 
     private bool CanPlaceWordWithTurn(string word, int x, int y, int dx, int dy)
@@ -181,9 +173,8 @@ public class GridGenerator : MonoBehaviour
             {
                 if (grid[x, y] == "_")
                 {
-                    // Присваиваем символ, а не строку
                     grid[x, y] = "_" + secretWord[secretIndex % secretWord.Length];
-                    Debug.Log("Буква в сетке "+grid[x, y]+" || "+ grid[x, y].ToString());
+                    Debug.Log("Р—Р°РїРѕР»РЅРµРЅРѕ: " + grid[x, y]);
                     secretIndex++;
                 }
             }

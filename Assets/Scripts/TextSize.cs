@@ -24,7 +24,7 @@ public class TextSize : MonoBehaviour
 
     public void startGeneration()
     {
-        gameManager.StartCoroutine(gameManager.RunGameFlow());
+        //gameManager.StartCoroutine(gameManager.RunGameFlow(levelNumber));
     }
 
     public void ResetSize()
@@ -33,12 +33,12 @@ public class TextSize : MonoBehaviour
         StopAllCoroutines();
         wordGame.clear();
         gridGenerator.wordsToPlace.Clear();
-        // Очищаем визуализацию
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (gridGenerator.TryGetComponent(out GridVisualizer gridVisualizer))
         {
             gridVisualizer.ClearGrid();
         }
-        Debug.Log("Сетка успешно сброшена.");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
         //gameManager.StartCoroutine(gameManager.RunGameFlow());
         //gridGenerator.InitializeGrid();
     }
