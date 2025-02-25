@@ -16,6 +16,7 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     public bool IsLocked { get; set; }
 
     [SerializeField] private GameObject secretCellPrefab; // Префаб для SecretCellController
+    [SerializeField] private Animator cellAnimator; // Аниматор ячейки
 
     private void Awake()
     {
@@ -64,6 +65,14 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         IsLocked = true;
     }
 
+    public void PlayAnimation()
+    {
+        if (cellAnimator != null)
+        {
+            cellAnimator.SetTrigger("Animate");
+        }
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if (GridVisualizer.instance != null && cellParent == null)
@@ -101,5 +110,3 @@ public class CellController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         }
     }
 }
-
-

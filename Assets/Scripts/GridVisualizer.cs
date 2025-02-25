@@ -14,12 +14,14 @@ public class GridVisualizer : MonoBehaviour
     public GameObject SectretContainer;
     public GameObject cellPrefab;
     public GridGenerator gridGenerator;
+    public Transform BridgeContainer;
+    public Image BridgePrefab;
 
     private List<CellController> selectedCells = new List<CellController>();
     private bool isSelecting = false;
     public GameObject LoadPanel;
 
-    private Queue<Color> recentColors = new Queue<Color>(); // ������� ��� ���������� ������
+    private Queue<Color> recentColors = new Queue<Color>();
 
     void Awake()
     {
@@ -90,6 +92,92 @@ public class GridVisualizer : MonoBehaviour
         }
     }
 
+    public int GetRemainingWordsCount()
+    {
+        return gridGenerator.wordsToPlace.Count;
+    }
+
+    public void ShowHint()
+    {
+        if (gridGenerator.wordsToPlace.Count == 0)
+        {
+            Debug.LogWarning("Нет оставшихся слов для подсказки.");
+            return;
+        }
+
+        string hintWord = gridGenerator.wordsToPlace[Random.Range(0, gridGenerator.wordsToPlace.Count)];
+        List<CellController> hintCells = FindWordCells(hintWord);
+
+        if (hintCells.Count > 0)
+        {
+            AnimateHint(hintCells);
+        }
+    }
+
+    private List<CellController> FindWordCells(string word)
+    {
+        List<CellController> wordCells = new List<CellController>();
+
+        foreach (Transform cellObj in gridLayout.transform)
+        {
+            CellController cell = cellObj.GetComponent<CellController>();
+            if (cell != null && word.StartsWith(cell.letter))
+            {
+                List<CellController> tempCells = new List<CellController> { cell };
+                int index = 1;
+
+                for (int i = 1; i < word.Length; i++)
+                {
+                    int nextX = cell.x + i;
+                    int nextY = cell.y;
+
+                    CellController nextCell = FindCellAt(nextX, nextY);
+                    if (nextCell != null && nextCell.letter == word[index].ToString())
+                    {
+                        tempCells.Add(nextCell);
+                        index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (index == word.Length)
+                {
+                    return tempCells;
+                }
+            }
+        }
+        return wordCells;
+    }
+
+    private void AnimateHint(List<CellController> cells)
+    {
+        foreach (var cell in cells)
+        {
+            cell.PlayAnimation();
+
+        }
+    }
+
+
+    private CellController FindCellAt(int x, int y)
+    {
+        foreach (Transform cellObj in gridLayout.transform)
+        {
+            CellController cell = cellObj.GetComponent<CellController>();
+            if (cell != null && cell.x == x && cell.y == y)
+            {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+
+
+
     public void EndSelection()
     {
         isSelecting = false;
@@ -144,6 +232,23 @@ public class GridVisualizer : MonoBehaviour
         foreach (var cell in selectedCells)
         {
             cell.HighlightCell(uniqueColor);
+        }
+        for(int i = 1; i < selectedCells.Count; i++)
+        {
+            var bridge = Instantiate(
+                BridgePrefab, 
+                Vector3.Lerp(
+                    selectedCells[i].transform.position,
+                    selectedCells[i-1].transform.position,
+                    0.5f
+                ),
+                Quaternion.identity,
+                BridgeContainer);
+                bridge.color = uniqueColor;
+            if(Mathf.Abs(selectedCells[i].transform.position.x - selectedCells[i-1].transform.position.x) > Mathf.Abs(selectedCells[i].transform.position.y - selectedCells[i-1].transform.position.y))
+            {
+                bridge.transform.Rotate(0,0,90);
+            }
         }
     }
 
