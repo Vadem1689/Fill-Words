@@ -7,6 +7,7 @@ public class GoToMenuButton : MonoBehaviour
 {
     public void Tap()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SoundManager.Instance.PlaySound("click");
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }

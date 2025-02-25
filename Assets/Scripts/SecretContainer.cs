@@ -30,6 +30,7 @@ public class SecretContainer : MonoBehaviour
         }
         if(q == SecretWord)
         {
+            MoneyManager.Instance.AddMoney(10);
             levelManager.OnLevelCompleted();
             WinPanel.SetActive(true);
         }

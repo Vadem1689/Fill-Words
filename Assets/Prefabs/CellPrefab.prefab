@@ -28,9 +28,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6868310748273590468}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -147,6 +148,7 @@ GameObject:
   - component: {fileID: 4976644655263855092}
   - component: {fileID: 3092180983236178272}
   - component: {fileID: 8016908820317849267}
+  - component: {fileID: 2122593261779601560}
   m_Layer: 5
   m_Name: CellPrefab
   m_TagString: Untagged
@@ -168,6 +170,7 @@ RectTransform:
   m_Children:
   - {fileID: 3484971571759565376}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -233,6 +236,7 @@ MonoBehaviour:
   cellParent: {fileID: 0}
   SecretWord: 0
   secretCellPrefab: {fileID: 7518743088146674186, guid: e414d5a6bf08dfe44a57f9ba4aaece95, type: 3}
+  cellAnimator: {fileID: 2122593261779601560}
 --- !u!114 &8016908820317849267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,3 +252,24 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 0
+--- !u!95 &2122593261779601560
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7518743088146674186}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a705bfadb314d40fb918b0b2ad7edd6c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

@@ -82,6 +82,7 @@ public class GridVisualizer : MonoBehaviour
 
         isSelecting = true;
         AddCellToSelection(cell);
+        SoundManager.Instance.PlaySound("click");
     }
 
     public void ContinueSelection(CellController cell)
@@ -89,6 +90,7 @@ public class GridVisualizer : MonoBehaviour
         if (isSelecting && !cell.IsLocked && IsAdjacent(cell, selectedCells[selectedCells.Count - 1]))
         {
             AddCellToSelection(cell);
+            SoundManager.Instance.PlaySound("click");
         }
     }
 
@@ -106,51 +108,76 @@ public class GridVisualizer : MonoBehaviour
         }
 
         string hintWord = gridGenerator.wordsToPlace[Random.Range(0, gridGenerator.wordsToPlace.Count)];
+
         List<CellController> hintCells = FindWordCells(hintWord);
 
         if (hintCells.Count > 0)
         {
             AnimateHint(hintCells);
         }
+        else
+        {
+            Debug.LogWarning("Слово не найдено");
+        }
     }
 
     private List<CellController> FindWordCells(string word)
     {
-        List<CellController> wordCells = new List<CellController>();
-
         foreach (Transform cellObj in gridLayout.transform)
         {
             CellController cell = cellObj.GetComponent<CellController>();
-            if (cell != null && word.StartsWith(cell.letter))
+            if (cell != null && cell.letter == word[0].ToString())
             {
-                List<CellController> tempCells = new List<CellController> { cell };
-                int index = 1;
-
-                for (int i = 1; i < word.Length; i++)
+                foreach (var direction in GetValidDirections())
                 {
-                    int nextX = cell.x + i;
-                    int nextY = cell.y;
-
-                    CellController nextCell = FindCellAt(nextX, nextY);
-                    if (nextCell != null && nextCell.letter == word[index].ToString())
+                    List<CellController> tempCells = new List<CellController> { cell };
+                    if (FindNextLetters(word, cell.x, cell.y, direction, 1, tempCells))
                     {
-                        tempCells.Add(nextCell);
-                        index++;
+                        return tempCells;
                     }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                if (index == word.Length)
-                {
-                    return tempCells;
                 }
             }
         }
-        return wordCells;
+        return new List<CellController>();
     }
+
+    private bool FindNextLetters(string word, int x, int y, (int dx, int dy) lastDirection, int index, List<CellController> collectedCells)
+    {
+        if (index >= word.Length) return true; // Успешно нашли слово
+
+        foreach (var direction in GetValidDirections())
+        {
+            if (direction == (-lastDirection.dx, -lastDirection.dy)) continue; // Исключаем обратное направление
+
+            int nextX = x + direction.dx;
+            int nextY = y + direction.dy;
+
+            CellController nextCell = FindCellAt(nextX, nextY);
+            if (nextCell != null && nextCell.letter == word[index].ToString())
+            {
+                collectedCells.Add(nextCell);
+                if (FindNextLetters(word, nextX, nextY, direction, index + 1, collectedCells))
+                {
+                    return true;
+                }
+                collectedCells.RemoveAt(collectedCells.Count - 1);
+            }
+        }
+
+        return false;
+    }
+
+    private List<(int dx, int dy)> GetValidDirections()
+    {
+        return new List<(int, int)>
+        {
+            (1, 0),   // Вправо
+            (-1, 0),  // Влево
+            (0, 1),   // Вниз
+            (0, -1)   // Вверх
+        };
+    }
+
 
     private void AnimateHint(List<CellController> cells)
     {
@@ -185,6 +212,7 @@ public class GridVisualizer : MonoBehaviour
         string word = string.Concat(selectedCells.ConvertAll(c => c.letter));
         if (gridGenerator.wordsToPlace.Contains(word))
         {
+            gridGenerator.wordsToPlace.Remove(word);
             Debug.Log("���������� ����� �������!");
 
             // ��������� ��������� ���� � ��������� �������

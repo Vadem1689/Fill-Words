@@ -6,9 +6,16 @@ public class LevelManager : MonoBehaviour
     private int lastLevel;
     public GameManager gameManager;
     public GameObject LevelMenu;
+
+    public GameObject GamePanel;
+
+    public static LevelManager Instance {get; private set; }
+
+    public int currentLevel;
     
     void Awake()
     {
+        Instance = this;
         lastLevel = PlayerPrefs.GetInt(LastLevelKey, 0);
     }
 
@@ -18,6 +25,9 @@ public class LevelManager : MonoBehaviour
         {
             gameManager.StartCoroutine(gameManager.RunGameFlow(levelNumber));
             LevelMenu.SetActive(false);
+            currentLevel = levelNumber;
+            GamePanel.SetActive(true);
+            SoundManager.Instance.PlaySound("click");
         }
         else
         {

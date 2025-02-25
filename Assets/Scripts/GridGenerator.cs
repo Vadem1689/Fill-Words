@@ -166,6 +166,7 @@ public class GridGenerator : MonoBehaviour
 
     private void FillEmptyCellsWithSecretWord()
     {
+        Debug.LogWarning($"SecretWord: {secretWord}");
         int secretIndex = 0;
         for (int x = 0; x < gridSize; x++)
         {

@@ -52,7 +52,7 @@ public class MoneyManager : MonoBehaviour
 
     public bool SpendMoney(int amount)
     {
-        if (amount > 0 && money >= amount)
+        if (money >= amount)
         {
             money -= amount;
             SaveMoney();
