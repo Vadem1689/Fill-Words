@@ -22,14 +22,15 @@ public class LevelMenuGenerator : MonoBehaviour
 
     private void GenerateLevelContainers()
     {
-        int containerCount = Mathf.CeilToInt((float)totalLevels / levelsPerContainer);
+        int addictedTotalLevels = totalLevels + LevelManager.Instance.GetLatestUnlockedLevel();
+        int containerCount = Mathf.CeilToInt((float)addictedTotalLevels / levelsPerContainer);
 
         for (int i = 0; i < containerCount; i++)
         {
             GameObject containerObj = Instantiate(containerPrefab, layoutParent);
             LevelButtonContainer container = containerObj.GetComponent<LevelButtonContainer>();
 
-            int startLevel = totalLevels - ((i + 1) * levelsPerContainer); // Номера уровней идут с конца
+            int startLevel = addictedTotalLevels - ((i + 1) * levelsPerContainer); // Номера уровней идут с конца
             Debug.Log($"StartLevel: {startLevel}");
             container.AssignLevels(levelManager, startLevel);
 
@@ -47,10 +48,11 @@ public class LevelMenuGenerator : MonoBehaviour
 
     private void ScrollToLatestLevel()
     {
+        int addictedTotalLevels = totalLevels + LevelManager.Instance.GetLatestUnlockedLevel();
         int lastUnlockedLevel = levelManager.GetLatestUnlockedLevel();
-        int containerIndex = Mathf.FloorToInt((float)(totalLevels - lastUnlockedLevel) / levelsPerContainer);
+        int containerIndex = Mathf.FloorToInt((float)(addictedTotalLevels - lastUnlockedLevel) / levelsPerContainer);
 
-        float normalizedPosition = (float)containerIndex / (containers.Count - 1);
+        float normalizedPosition = (float)containerIndex / (containers.Count);
         scrollRect.verticalNormalizedPosition = Mathf.Clamp01(1 - normalizedPosition); // Снизу вверх
     }
 }
